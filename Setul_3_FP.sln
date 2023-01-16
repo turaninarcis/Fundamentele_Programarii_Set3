@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33122.133
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Setul_3_FP", "Setul_3_FP.csproj", "{12801443-3C3E-46F2-B742-85BFE51D303C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{12801443-3C3E-46F2-B742-85BFE51D303C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12801443-3C3E-46F2-B742-85BFE51D303C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12801443-3C3E-46F2-B742-85BFE51D303C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12801443-3C3E-46F2-B742-85BFE51D303C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {48870D62-36E5-41DD-AF0F-5D348E76345C}
+	EndGlobalSection
+EndGlobal
