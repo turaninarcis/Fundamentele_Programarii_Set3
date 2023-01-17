@@ -1,7 +1,11 @@
-﻿internal class Program
+﻿using System.Numerics;
+using System.Security.Cryptography.X509Certificates;
+
+internal class Program
 {
     private static void Main(string[] args)
     {
+        
         int indexProblema = InputProblemIndex();
         while (indexProblema < 1||indexProblema>31)
         {
@@ -30,7 +34,7 @@
     {
         switch(index)
         {
-            case 1: break;//Problema1();
+            case 1: Problema1();break;
             case 2: break;//Problema2();
             case 3: break;//Problema3();
             case 4: break;//Problema4();
@@ -64,4 +68,33 @@
             default:throw new Exception(); break;
         }
     }
+
+    private static int[] GetInputVector()
+    {
+        Console.WriteLine("Introduceti sirul de numere necesar problemei");
+        int[] vectorNumere;
+        string[] stringuriNumere;
+        char[] despartitoare = { ' ', ',', ';' };
+        stringuriNumere = Console.ReadLine().Split(despartitoare);
+        Stack<int> stackNumere = new Stack<int>();
+        int aux = 0;
+        foreach(string numar in stringuriNumere)
+        {
+            if(int.TryParse(numar,out aux))
+            { stackNumere.Push(aux);}
+        }
+        vectorNumere = stackNumere.ToArray();
+        Array.Reverse(vectorNumere);
+        return vectorNumere;
+        
+    }
+
+    #region Probleme
+    private static void Problema1()
+    {
+        int[] numere = GetInputVector();
+        int a  = 0;
+    }
+
+    #endregion
 }
