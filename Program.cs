@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.IO.Pipes;
+using System.Numerics;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.Intrinsics;
 using System.Security.Cryptography.X509Certificates;
@@ -19,21 +20,7 @@ internal class Program
         ExecutareProblema(indexProblema);
         int b = indexProblema;
     }
-    private static int InputProblemIndex()
-    {
-        Console.WriteLine("Introdu indexul problemei dorite");
-        int indexProblema=0;
-        try
-        {
-            indexProblema = int.Parse(Console.ReadLine());
-        }
-        catch
-        {
-            Console.WriteLine("Datele introduse sunt gresite, te rog introdu din nou datele.");
-            indexProblema = InputProblemIndex();
-        }
-        return indexProblema;
-    }
+ 
     private static void ExecutareProblema(int index)
     {
         switch(index)
@@ -47,16 +34,16 @@ internal class Program
             case 7: Problema7();break;
             case 8: Problema8();break;
             case 9: Problema9();break;
-            case 10: break;//Problema10();
-            case 11: break;//Problema11();
-            case 12: break;//Problema12();
-            case 13: break;//Problema13();
-            case 14: break;//Problema14();
-            case 15: break;//Problema15();
-            case 16: break;//Problema16();
-            case 17: break;//Problema17();
-            case 18: break;//Problema18();
-            case 19: break;//Problema19();
+            case 10: Problema10();break;
+            case 11: Problema11();break;
+            case 12: Problema12();break;
+            case 13: Problema13();break;
+            case 14: Problema14();break;
+            case 15: Problema15();break;
+            case 16: Problema16();break;
+            case 17: Problema17();break;
+            case 18: Problema18(); break;
+            case 19: Problema19(); break;
             case 20: break;//Problema20();
             case 21: break;//Problema21();
             case 22: break;//Problema22();
@@ -73,6 +60,7 @@ internal class Program
         }
     }
 
+    #region Helpers
     private static int[] GetInputVector()
     {
         Console.WriteLine("Introduceti sirul de numere necesar problemei");
@@ -114,6 +102,76 @@ internal class Program
         Console.Write("Noul vector: ");
         foreach(int i in array) Console.Write(i+" ");
     }
+
+    private static int BinarySearch(int[] array, int x, int low, int high)
+    {
+        int mid;
+        while (low < high)
+        {
+            mid = (low + high) / 2;
+            if (array[mid] == x)
+                return mid;
+            else if (array[mid] < x)
+            {
+                low = mid + 1;
+            }
+            else if (array[mid] > x)
+            {
+                high = mid - 1;
+            }
+        }
+        return -1;
+    }
+
+    private static int CMMDC(int a,int b)
+    {
+        int r;
+        while(b!=0)
+        {
+            r = a%b; a = b; b = r;
+        }
+        return a;
+    }
+    private static char NumberToChar(int n)
+    {
+        switch(n)
+        {
+            case 0: return '0';
+            case 1:return'1';
+            case 2:return '2';
+            case 3:return '3';
+            case 4:return '4';
+            case 5:return '5';
+            case 6:return '6';
+            case 7:return '7';
+            case 8:return '8';
+            case 9:return '9';
+            case 10:return 'A';
+            case 11:return 'B';
+            case 12: return 'C';
+            case 13: return 'D';
+            case 14: return 'E';
+            case 15: return 'F';
+            default: throw new Exception();
+        }
+    }
+
+    private static int InputProblemIndex()
+    {
+        Console.Write("Introdu indexul problemei dorite: ");
+        int indexProblema = 0;
+        try
+        {
+            indexProblema = int.Parse(Console.ReadLine());
+        }
+        catch
+        {
+            Console.WriteLine("Datele introduse sunt gresite, te rog introdu din nou datele.");
+            indexProblema = InputProblemIndex();
+        }
+        return indexProblema;
+    }
+    #endregion
 
     #region Probleme
     private static void Problema1()
@@ -303,22 +361,202 @@ internal class Program
     private static void Problema10() 
     {
         int[] numere = GetInputVector();
+        Console.Write("Introduceti un numar k pe care doriti sa il gasiti in vector ");
         int k = GetInputInt();
         Array.Sort(numere);
+        int index = BinarySearch(numere, k, 0, numere.Length);
+        Console.WriteLine(index);
     }
 
-    private static int BinarySearch(int[] array,int x ,int low, int high)
+    private static void Problema11()
     {
-        int mid;
-        while(low < high)
-        {
-            mid = (low+high)/2;
-            if (array[mid]==x) return mid;
-            else if (array[mid]<x)
-            {
+        Console.Write("Introduceti un numar n pentru care doriti sa aflati toate numerele prime mai mici sau egale cu acesta: ");
+        int n = GetInputInt();
 
+        int[] prime = new int[n+1];
+        for(int i = 0;i<=n;i++)
+        {
+            prime[i] = 0;
+        }
+        prime[0] = 1;
+        prime[1] = 1;
+
+        for(int i = 2;i<Math.Sqrt(n);i++)
+        {
+            if (prime[i]==0)
+            {
+                for(int j = 2;j<=n/i;j++)
+                {
+                    prime[i * j] = 1;
+                }
             }
         }
+        Console.WriteLine("Numerele prime mai mici sau egale cu n sunt: ");
+        for(int i =0;i<n;i++)
+        {
+            if (prime[i]==0)
+            {
+                Console.Write(i+" ");
+            }
+        }
+
+    }
+
+    private static void Problema12() 
+    {
+        int[] numere = GetInputVector();
+
+        int min;
+        for(int i = 0;i<numere.Length-1;i++)
+        {
+            min = i;
+            for (int j = i+1;j<numere.Length;j++)
+            {
+                if (numere[min] > numere[j])
+                {
+                    
+                    min = j;
+                }
+
+            }
+            (numere[min], numere[i]) = (numere[i], numere[min]);
+        }
+        ShowTheArray(numere);
+    }
+
+    private static void Problema13() 
+    {
+        int[] numere = GetInputVector();
+
+        for(int i = 1;i<numere.Length;i++)
+        {
+            int aux = numere[i];
+            int position = i;
+            while(position > 0 && numere[position-1]>aux)
+            {
+                numere[position] = numere[position- 1];
+                position--;
+            }
+            numere[position] = aux;
+        }
+        ShowTheArray(numere);
+    }
+
+    private static void Problema14()
+    {
+        int[] numere = GetInputVector();
+        int indexAux;
+        for(int i = 0;i<numere.Length;i++)
+        {
+            if (numere[i]==0)
+            {
+                indexAux = i;
+                while (i < numere.Length - 1 && numere[i] == 0)
+                {
+                    i++;
+                } 
+                numere[indexAux] = numere[i];
+                numere[i] = 0;
+                i = indexAux;
+            }
+        }
+        ShowTheArray(numere);
+    }
+
+    private static void Problema15() 
+    {
+        int[] numere = GetInputVector();
+        for (int i = 0; i < numere.Length; i++)
+        {
+            while (Array.FindIndex(numere, i + 1, val => val.Equals(numere[i]))>=0)
+            {
+                int index = Array.FindIndex(numere, i + 1, val => val.Equals(numere[i]));
+                Array.ConstrainedCopy(numere,index+1, numere,index,numere.Length-index-1);
+                Array.Resize(ref numere,numere.Length-1);
+                
+            }
+            
+        }
+        ShowTheArray(numere);
+    }
+
+    private static void Problema16()
+    {
+        int[] numere = GetInputVector();
+
+        int div = CMMDC(numere[0], numere[1]);
+
+        for(int i = 2;i<numere.Length;i++)
+        {
+            div = CMMDC(div, numere[i]);
+        }
+        Console.WriteLine("Cel mai mare divizor al numerelor din sir este: "+ div);
+    }
+    private static void Problema17() 
+    {
+        Console.Write("Introduceti un numar: ");
+        int n = GetInputInt();
+        Console.Write("Introduceti baza in care doriti sa transformati numarul introdus: ");
+        int b = GetInputInt();
+        int c;
+        Stack<char> numarInBazaB = new Stack<char>();
+        while(n/b!=0)
+        {
+            c = n % b;
+            numarInBazaB.Push(NumberToChar(c));
+            n=n/b;
+
+        }
+        numarInBazaB.Push(NumberToChar(n % b));
+        while(numarInBazaB.Count>0)
+            Console.Write(numarInBazaB.Pop());
+    }
+    private static void Problema18() 
+    {
+        int[] polinom = GetInputVector();
+        Console.Write("Introduceti un n pentru care doriti sa calculati valoarea polinomului in acel punct: ");
+        int x = GetInputInt();
+        double rezultat = 0;
+        for(int i = 0;i<polinom.Length;i++)
+        {
+            rezultat += polinom[i] * Math.Pow(x, i);
+        }
+
+        Console.WriteLine($"Rezultatul polinomului in punctul {x} este: {rezultat}.");
+    }
+
+    private static void Problema19()
+    {
+        Console.WriteLine("Vectorul in care se cauta este: ");
+        int[] s = GetInputVector();
+
+        Console.WriteLine("Vectorul care se cauta este: ");
+        int[] p = GetInputVector();
+
+        int n = 0;
+        
+        for(int i = 0;i< s.Length;i++) 
+        {
+            bool ok = true;
+            if (s[i] == p[0])
+            {
+                for(int j = 0;j<p.Length;j++)
+                {
+                    if (i + j >= s.Length || s[i+j] != p[j]) 
+                    {
+                        ok = false;
+                        break;
+                    }
+                }
+                if(ok) { n++; }
+            }
+        }
+        Console.WriteLine($"p apare in vectorul s de {n} ori.");
+    }
+
+    private static void Problema20() 
+    {
+
     }
     #endregion
 }
