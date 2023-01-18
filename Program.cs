@@ -44,12 +44,12 @@ internal class Program
             case 17: Problema17();break;
             case 18: Problema18(); break;
             case 19: Problema19(); break;
-            case 20: break;//Problema20();
-            case 21: break;//Problema21();
-            case 22: break;//Problema22();
-            case 23: break;//Problema23();
+            case 20: Problema20(); break;
+            case 21: Problema21(); break;
+            case 22: Problema22(); break;
+            case 23: Problema23(); break;
             case 24: break;//Problema24();
-            case 25: break;//Problema25();
+            case 25: Problema25(); break;
             case 26: break;//Problema26();
             case 27: break;//Problema27();
             case 28: break;//Problema28();
@@ -171,6 +171,43 @@ internal class Program
         }
         return indexProblema;
     }
+
+    private static int[] RemoveRepeatingElements(int[] numere)
+    {
+        for (int i = 0; i < numere.Length; i++)
+        {
+            while (Array.FindIndex(numere, i + 1, val => val.Equals(numere[i])) >= 0)
+            {
+                int index = Array.FindIndex(numere, i + 1, val => val.Equals(numere[i]));
+                Array.ConstrainedCopy(numere, index + 1, numere, index, numere.Length - index - 1);
+                Array.Resize(ref numere, numere.Length - 1);
+
+            }
+
+        }
+        return numere;
+    }
+
+    private static int[] SelectionSort(int[] numere) 
+    {
+        int min;
+        for (int i = 0; i < numere.Length - 1; i++)
+        {
+            min = i;
+            for (int j = i + 1; j < numere.Length; j++)
+            {
+                if (numere[min] > numere[j])
+                {
+
+                    min = j;
+                }
+
+            }
+            (numere[min], numere[i]) = (numere[i], numere[min]);
+        }
+        return numere;
+    }
+
     #endregion
 
     #region Probleme
@@ -406,21 +443,7 @@ internal class Program
     {
         int[] numere = GetInputVector();
 
-        int min;
-        for(int i = 0;i<numere.Length-1;i++)
-        {
-            min = i;
-            for (int j = i+1;j<numere.Length;j++)
-            {
-                if (numere[min] > numere[j])
-                {
-                    
-                    min = j;
-                }
-
-            }
-            (numere[min], numere[i]) = (numere[i], numere[min]);
-        }
+        SelectionSort(numere);
         ShowTheArray(numere);
     }
 
@@ -466,17 +489,7 @@ internal class Program
     private static void Problema15() 
     {
         int[] numere = GetInputVector();
-        for (int i = 0; i < numere.Length; i++)
-        {
-            while (Array.FindIndex(numere, i + 1, val => val.Equals(numere[i]))>=0)
-            {
-                int index = Array.FindIndex(numere, i + 1, val => val.Equals(numere[i]));
-                Array.ConstrainedCopy(numere,index+1, numere,index,numere.Length-index-1);
-                Array.Resize(ref numere,numere.Length-1);
-                
-            }
-            
-        }
+        numere = RemoveRepeatingElements(numere);
         ShowTheArray(numere);
     }
 
@@ -556,6 +569,257 @@ internal class Program
 
     private static void Problema20() 
     {
+        Console.WriteLine("Introduceti primul sireag de margele");
+        int[] s1 = GetInputVector();
+        Console.WriteLine("Introduceti al doilea sireag de margele");
+        int[] s2 = GetInputVector();
+        int n = 0;
+        int aux = 0;
+        for(int i = 0;i< s1.Length;i++) 
+        {
+            for(int j = 0;j<s1.Length;j++)
+            {
+                if (s1[j] == s2[j]) n++;
+            }
+            aux = s1[0];
+            for(int j = 0; j < s1.Length-1; j++) 
+            {
+                s1[j] = s1[j+1];
+            }
+            s1[s1.Length-1] = aux;
+
+        }
+        Console.WriteLine("Numarul de margele suprapuse este: " + n);
+    }
+    private static void Problema21()
+    {
+        Console.WriteLine("Introduceti primul cuvant: ");
+        string cuvant1 = Console.ReadLine();
+        Console.WriteLine("Introduceti al doilea cuvant: ");
+        string cuvant2 = Console.ReadLine();
+
+        string cuvant1aux = cuvant1.ToUpper();
+        string cuvant2aux = cuvant2.ToUpper();
+        if(cuvant1aux.Equals(cuvant2aux)) { Console.WriteLine("Cuvintele sunt egale."); return; }
+        int aux = Math.Min(cuvant1.Length, cuvant2.Length);
+        int i = 0;
+        while (cuvant2aux[i] == cuvant1aux[i]&&i<aux)
+        { i++; }
+        if (cuvant1aux[i] < cuvant2aux[i]) { Console.WriteLine($"{cuvant1} ar aparea primul in dictionar iar {cuvant2} ar aparea al doilea."); }
+        else { Console.WriteLine($"{cuvant2} ar aparea primul in dictionar iar {cuvant1} ar aparea al doilea."); }
+    }
+
+    private static void Problema22()
+    {
+        Console.WriteLine("Introduceti primul vector");
+        int[] v1 = GetInputVector();
+        Console.WriteLine("Introduceti al doilea vector");
+        int[] v2 = GetInputVector();
+
+        v1 = RemoveRepeatingElements(v1);
+        v2 = RemoveRepeatingElements(v2);
+
+        List<int> listaIntersectieVectori = new List<int>();
+        List<int> listaReuniuneVectori= new List<int>();
+        List<int> v1minusv2 = new List<int>();
+        List<int> v2minusv1 = new List<int>();
+
+        for(int i = 0;i<v1.Length;i++) 
+        {
+            for(int j = 0;j<v2.Length;j++) 
+            {
+                if (v1[i] == v2[j]) 
+                {
+                    listaIntersectieVectori.Add(v1[i]);
+                }
+            }
+        }
+        for (int i = 0; i < v1.Length; i++)
+        {
+            listaReuniuneVectori.Add(v1[i]);
+        }
+        for(int j = 0; j < v2.Length; j++) 
+        {
+            if (!listaReuniuneVectori.Contains(v2[j]))
+                listaReuniuneVectori.Add(v2[j]);
+        }
+        bool ok;
+        for (int i = 0; i < v1.Length; i++)
+        {
+            ok = true;   
+            for (int j = 0; j < v2.Length; j++)
+            {
+                if (v1[i] == v2[j])
+                {
+                    ok= false;
+                }
+            }
+            if(ok==true) { v1minusv2.Add(v1[i]); }
+        }
+        for (int i = 0; i < v2.Length; i++)
+        {
+            ok = true;
+            for (int j = 0; j < v1.Length; j++)
+            {
+                if (v2[i] == v1[j])
+                {
+                    ok = false;
+                }
+            }
+            if (ok == true) { v2minusv1.Add(v2[i]); }
+        }
+
+        Console.Write("Reuniunea vectorilor: ");
+        for(int i = 0; i < listaReuniuneVectori.Count; i++) { Console.Write(listaReuniuneVectori[i]+" "); }
+        Console.WriteLine();
+
+        Console.Write("Intersectia vectorilor: ");
+        for (int i = 0; i < listaIntersectieVectori.Count; i++) { Console.Write(listaIntersectieVectori[i] + " "); }
+        Console.WriteLine();
+
+        Console.Write("v1-v2: ");
+        for (int i = 0; i < v1minusv2.Count; i++) { Console.Write(v1minusv2[i] + " "); }
+        Console.WriteLine();
+
+        Console.Write("v2-v1: ");
+        for (int i = 0; i < v2minusv1.Count; i++) { Console.Write(v2minusv1[i] + " "); }
+        Console.WriteLine();
+
+    }
+
+    private static void Problema23()
+    {
+        Console.WriteLine("Introduceti primul vector");
+        int[] v1 = GetInputVector();
+        Console.WriteLine("Introduceti al doilea vector");
+        int[] v2 = GetInputVector();
+
+        v1 = RemoveRepeatingElements(v1);
+        v2 = RemoveRepeatingElements(v2);
+        v1 = SelectionSort(v1);//singura diferenta intre cealalta rezolvare si aceasta rezolvare este aparitia acestor apeluri a functiei de sortare
+        v2 = SelectionSort(v2);
+        List<int> listaIntersectieVectori = new List<int>();
+        List<int> listaReuniuneVectori = new List<int>();
+        List<int> v1minusv2 = new List<int>();
+        List<int> v2minusv1 = new List<int>();
+
+        for (int i = 0; i < v1.Length; i++)
+        {
+            for (int j = 0; j < v2.Length; j++)
+            {
+                if (v1[i] == v2[j])
+                {
+                    listaIntersectieVectori.Add(v1[i]);
+                }
+            }
+        }
+        for (int i = 0; i < v1.Length; i++)
+        {
+            listaReuniuneVectori.Add(v1[i]);
+        }
+        for (int j = 0; j < v2.Length; j++)
+        {
+            if (!listaReuniuneVectori.Contains(v2[j]))
+                listaReuniuneVectori.Add(v2[j]);
+        }
+        bool ok;
+        for (int i = 0; i < v1.Length; i++)
+        {
+            ok = true;
+            for (int j = 0; j < v2.Length; j++)
+            {
+                if (v1[i] == v2[j])
+                {
+                    ok = false;
+                }
+            }
+            if (ok == true) { v1minusv2.Add(v1[i]); }
+        }
+        for (int i = 0; i < v2.Length; i++)
+        {
+            ok = true;
+            for (int j = 0; j < v1.Length; j++)
+            {
+                if (v2[i] == v1[j])
+                {
+                    ok = false;
+                }
+            }
+            if (ok == true) { v2minusv1.Add(v2[i]); }
+        }
+
+        Console.Write("Reuniunea vectorilor: ");
+        for (int i = 0; i < listaReuniuneVectori.Count; i++) { Console.Write(listaReuniuneVectori[i] + " "); }
+        Console.WriteLine();
+
+        Console.Write("Intersectia vectorilor: ");
+        for (int i = 0; i < listaIntersectieVectori.Count; i++) { Console.Write(listaIntersectieVectori[i] + " "); }
+        Console.WriteLine();
+
+        Console.Write("v1-v2: ");
+        for (int i = 0; i < v1minusv2.Count; i++) { Console.Write(v1minusv2[i] + " "); }
+        Console.WriteLine();
+
+        Console.Write("v2-v1: ");
+        for (int i = 0; i < v2minusv1.Count; i++) { Console.Write(v2minusv1[i] + " "); }
+        Console.WriteLine();
+    }
+
+    private static void Problema25()
+    {
+        Console.Write("Introduceti primul vector: ");
+        int[] v1 = GetInputVector();
+        Console.Write("Introduceti al doilea vector: ");
+        int[] v2 = GetInputVector();
+        int[] v3 = new int[v1.Length + v2.Length];
+        int i = 0; int j = 0;int k = 0;
+        while (i < v1.Length && j < v2.Length) 
+        {
+            if (v1[i] > v2[j]) 
+            {
+                v3[k] = v2[j];
+                j++;k++;
+            }
+            else 
+            {
+                v3[k] = v1[i];
+                i++;
+                k++;
+            }
+        }
+        
+        if(i<v1.Length)
+        {
+            while (i < v1.Length)
+            {
+                v3[k] = v1[i];
+                i++;
+                k++;
+            }
+        }
+        else if(j<v2.Length) 
+        {
+            while (j < v2.Length)
+            {
+                v3[k] = v2[j];
+                j++; k++;
+            }
+        }
+        Console.Write("Vectorul interclasat este: ");
+        ShowTheArray(v3);
+    }
+
+    private static void Problema26()
+    {
+        Console.WriteLine("Introduceti primul numar natural mare fara alte simboluri in afara de cifre.");
+        string numar1 = Console.ReadLine();
+        Console.WriteLine("Introduceti al doilea numar natural mare fara alte simboluri in afara de cifre.");
+        string numar2 = Console.ReadLine();
+        string adunare;
+        if (numar1.Length > numar2.Length)
+            adunare = numar1;
+        
+
 
     }
     #endregion
