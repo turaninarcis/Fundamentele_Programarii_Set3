@@ -6,11 +6,11 @@ using System.Security.Cryptography.X509Certificates;
 using System.Xml.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
+
 internal class Program
 {
     private static void Main(string[] args)
     {
-        
         int indexProblema = InputProblemIndex();
         while (indexProblema < 1||indexProblema>31)
         {
@@ -48,9 +48,9 @@ internal class Program
             case 21: Problema21(); break;
             case 22: Problema22(); break;
             case 23: Problema23(); break;
-            case 24: break;//Problema24();
+            case 24: Problema24(); break;
             case 25: Problema25(); break;
-            case 26: break;//Problema26();
+            case 26: Problema26(); break;
             case 27: break;//Problema27();
             case 28: break;//Problema28();
             case 29: break;//Problema29();
@@ -156,6 +156,25 @@ internal class Program
         }
     }
 
+    private static int CharToNumber(char c)
+    {
+        switch (c)
+        {
+            case '0': return 0;
+            case '1': return 1;
+            case '2': return 2;
+            case '3': return 3;
+            case '4': return 4;
+            case '5': return 5;
+            case '6': return 6;
+            case '7': return 7;
+            case '8': return 8;
+            case '9': return 9;
+            default: throw new Exception();
+        }
+        
+    }
+
     private static int InputProblemIndex()
     {
         Console.Write("Introdu indexul problemei dorite: ");
@@ -208,6 +227,60 @@ internal class Program
         return numere;
     }
 
+    private static char[] AdunareDouaNumereMari(string numar1,string numar2)
+    {
+        char[] adunare;
+        string longerNumber;
+        string shorterNumber;
+        if (numar1.Length > numar2.Length)
+        {
+            longerNumber = numar1;
+            shorterNumber = numar2;
+        }
+        else
+        {
+            longerNumber = numar2;
+            shorterNumber = numar1;
+        }
+        adunare = ("0" + longerNumber).ToCharArray();
+        int aux;
+        int carry = 0;
+
+        int i = 0;
+        while (i < shorterNumber.Length)
+        {
+            aux = CharToNumber(adunare[adunare.Length - i - 1]) + CharToNumber(shorterNumber[shorterNumber.Length - i - 1]);
+            aux += carry;
+            if (aux >= 10)
+            {
+                carry = 1;
+                aux = aux % 10;
+            }
+            else
+            {
+                carry = 0;
+            }
+            adunare[adunare.Length - i - 1] = NumberToChar(aux);
+            i++;
+        }
+        while (i < adunare.Length)
+        {
+            aux = CharToNumber(adunare[adunare.Length - i - 1]);
+            aux += carry;
+            if (aux >= 10)
+            {
+                carry = 1;
+                aux = aux % 10;
+            }
+            else
+            {
+                carry = 0;
+            }
+            adunare[adunare.Length - i - 1] = NumberToChar(aux);
+            i++;
+        }
+        return adunare;
+    }
     #endregion
 
     #region Probleme
@@ -765,6 +838,44 @@ internal class Program
         Console.WriteLine();
     }
 
+    private static void Problema24()
+    {
+        Console.WriteLine("Introduceti primul vector");
+        int[] v1 = GetInputVector();
+        Console.WriteLine("Introduceti al doilea vector");
+        int[] v2 = GetInputVector();
+        int max = int.MinValue;
+        for(int i = 0;i<v1.Length;i++)
+        {
+            if (v1[i]>max) max = v1[i];
+        }
+        int[] v1Bool = new int[max];
+
+        int max = int.MinValue;
+        for (int i = 0; i < v2.Length; i++)
+        {
+            if (v2[i] > max) max = v2[i];
+        }
+        int[] v2Bool = new int[max];
+        
+        for(int i = 0;i< v1.Length;i++) 
+        {
+            v1Bool[v1[i]] = 1;
+        }
+        for (int i = 0; i < v2.Length; i++)
+        {
+            v2Bool[v2[i]] = 1;
+        }
+
+        Console.Write("Intersectia celor doi vectori este: ");
+        for(int i = 0;i<v1.Length;i++)
+        {
+            if (v1Bool[i] == 1 && v2Bool[i]==1)
+                Console.Write(i+' ');
+        }
+        Console.WriteLine();
+    }
+
     private static void Problema25()
     {
         Console.Write("Introduceti primul vector: ");
@@ -815,12 +926,15 @@ internal class Program
         string numar1 = Console.ReadLine();
         Console.WriteLine("Introduceti al doilea numar natural mare fara alte simboluri in afara de cifre.");
         string numar2 = Console.ReadLine();
-        string adunare;
-        if (numar1.Length > numar2.Length)
-            adunare = numar1;
         
+        char[] adunare = AdunareDouaNumereMari(numar1,numar2);
 
+        //TODO: implement the multiplication and substraction methods
 
+        Console.Write(adunare);
+        Console.ReadLine();
+        
+        
     }
     #endregion
 }
