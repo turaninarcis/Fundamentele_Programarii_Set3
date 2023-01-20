@@ -1,4 +1,5 @@
-﻿using System.IO.Pipes;
+﻿using System.ComponentModel;
+using System.IO.Pipes;
 using System.Numerics;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.Intrinsics;
@@ -50,12 +51,12 @@ internal class Program
             case 23: Problema23(); break;
             case 24: Problema24(); break;
             case 25: Problema25(); break;
-            case 26: Problema26(); break;
-            case 27: break;//Problema27();
-            case 28: break;//Problema28();
-            case 29: break;//Problema29();
-            case 30: break;//Problema30();
-            case 31: break;//Problema31();
+            //case 26: Problema26(); break;
+            case 27: Problema27(); break;
+            case 28: Problema28(); break;
+            case 29: Problema29(); break;
+            case 30: Problema30(); break;
+            case 31: Problema31(); break;
             default:throw new Exception(); break;
         }
     }
@@ -63,7 +64,6 @@ internal class Program
     #region Helpers
     private static int[] GetInputVector()
     {
-        Console.WriteLine("Introduceti sirul de numere necesar problemei");
         int[] vectorNumere;
         string[] stringuriNumere;
         char[] despartitoare = { ' ', ',', ';' };
@@ -227,6 +227,86 @@ internal class Program
         return numere;
     }
 
+    private static void QuickSort(int[] numere, int beg,int end) 
+    {
+        if(beg<end)
+        {
+            int pivotIndex = Partition(numere,beg,end);
+            QuickSort(numere, beg, pivotIndex-1);
+            QuickSort(numere, pivotIndex+1, end);
+        }
+    }
+    private static int Partition(int[]numere,int beg,int end)
+    {
+        int pivot = numere[end];
+        int pIndex = beg - 1;
+        for(int i = beg;i<end;i++)
+        {
+            if (numere[i]<pivot)
+            {
+                pIndex++;
+                (numere[i], numere[pIndex]) = (numere[pIndex], numere[i]);
+            }
+        }
+        (numere[pIndex + 1], numere[end]) = (numere[end], numere[pIndex+1]);
+        return pIndex+1;
+    }
+
+    private static void MergeSortAux(int[]numere, int l, int m, int r)
+    {
+        int n1 = m - l + 1;
+        int n2 = r - m;
+
+        int[] L = new int[n1];
+        int[] R = new int[n2];
+        int i, j;
+
+        for (i = 0; i < n1; ++i)
+            L[i] = numere[l + i];
+        for (j = 0; j < n2; ++j)
+            R[j] = numere[m + 1 + j];
+        i = 0;
+        j = 0;
+
+        int k = l;
+        while (i < n1 && j < n2)
+        {
+            if (L[i] <= R[j])
+            {
+                numere[k] = L[i];
+                i++;
+            }
+            else
+            {
+                numere[k] = R[j];
+                j++;
+            }
+            k++;
+        }
+        while (i < n1)
+        {
+            numere[k] = L[i];
+            i++;
+            k++;
+        }
+        while (j < n2)
+        {
+            numere[k] = R[j];
+            j++;
+            k++;
+        }
+    }
+    private static void MergeSort(int[] numere,int l, int r)
+    {
+        if (l < r)
+        {
+            int m = l + (r - l) / 2;
+            MergeSort(numere, l, m);
+            MergeSort(numere, m + 1, r);
+            MergeSortAux(numere, l, m, r);
+        }
+    }
+
     private static char[] AdunareDouaNumereMari(string numar1,string numar2)
     {
         char[] adunare;
@@ -281,11 +361,68 @@ internal class Program
         }
         return adunare;
     }
+    private static string ScadereDouaNumereMari(string numar1,string numar2)
+    {
+        Stack<char> stackScadere = new Stack<char>();
+        bool isNegative=false;
+        int i = numar1.Length- 1;
+        int j = numar2.Length- 1;
+        int carry=0;
+        int aux;
+        while(i >= 0 && j >= 0)
+        {
+            aux = CharToNumber(numar1[i]) - CharToNumber(numar2[j])-carry;
+            carry = 0;
+            if (aux<0)
+            {
+                carry = 1;
+                aux += 10;
+                stackScadere.Push(NumberToChar(aux));
+            }
+            else
+            {
+                stackScadere.Push(NumberToChar(aux));
+            }
+            i--;
+            j--;
+        }
+        if(i>0)
+        {          
+            for (int k = i;k>0;k--) 
+            {
+                aux = CharToNumber(numar1[i]) - 1;
+                if (aux < 0)
+                {
+                    carry = 1;
+                    stackScadere.Push(NumberToChar(aux+10));
+
+                }
+                else
+                {
+                    stackScadere.Push(NumberToChar(aux));
+                    carry = 0;
+                }
+            }
+        }
+        else if(j>0) 
+        {
+            isNegative = true;
+
+        }
+
+        if(isNegative) 
+        {
+            stackScadere.Push('-');
+        }
+        string stringNumar="";
+        return stringNumar;
+    }
     #endregion
 
     #region Probleme
     private static void Problema1()
     {
+        Console.WriteLine("Introduceti vectorul pentru care doriti suma elementelor: ");
         int[] numere = GetInputVector();
         int sum = 0;
         foreach(int numar in numere)
@@ -294,6 +431,7 @@ internal class Program
     }
     private static void Problema2()
     {
+        Console.WriteLine("Introduceti vectorul pe care doriti sa fie cautat numarul k: ");
         int[] numere = GetInputVector();
         int k;
         Console.WriteLine("Introduceti un numar intreg k pe care doriti sa il cautati in sir.");
@@ -312,6 +450,7 @@ internal class Program
 
     private static void Problema3() 
     {
+        Console.WriteLine("Introduceti vectorul pentru care doriti sa aflati cel mai mic element si cel mai mare element care se afla in acesta: ");
         int[] numere = GetInputVector();
         int[] numere2 = new int[numere.Length];
         Array.Copy(numere, numere2,numere.Length);
@@ -325,6 +464,8 @@ internal class Program
 
     private static void Problema4()
     {
+        Console.WriteLine("Introduceti vectorul pentru care doriti sa aflati cel mai mic element si cel mai mare element care se afla in acesta: ");
+
         int[] numere = GetInputVector();
         int max = int.MinValue; 
         int min = int.MaxValue;
@@ -356,6 +497,7 @@ internal class Program
     }
     private static void Problema5() 
     {
+        Console.WriteLine("Introduceti vectorul in care doriti sa inserati o valoare e pe pozitia k: ");
         int[] numere = GetInputVector();
         int[] numereExtended = new int[numere.Length+1];
         Array.Copy(numere, numereExtended,numere.Length);
@@ -390,22 +532,14 @@ internal class Program
 
     private static void Problema6()
     {
+        Console.WriteLine("Introduceti vectorul din care doriti sa stergeti o valoare de pe pozitia k: ");
+
         int[]? numere = GetInputVector();
 
         Console.WriteLine("Introduceti o pozitie al unui element din vector pe care doriti sa il stergeti");
         bool ok;
-        int k = 0;
-        do
-        {
-            ok = false;
-            try
-            {
-                int.TryParse(Console.ReadLine(), out k);
-                ok = true;
-            }
-            catch { Console.WriteLine("Input gresit, incercati sa introduceti din nou datele."); }
-        } while (ok == false);
-
+        int k = GetInputInt();
+        
         for(int i = k; i < numere.Length-1;i++)
         {
             numere[i] = numere[i + 1];
@@ -421,6 +555,7 @@ internal class Program
 
     private static void Problema7()
     {
+        Console.WriteLine("Introduceti vectorul pe care doriti sa il inserati: ");
         int[] numere = GetInputVector();
         int aux = 0;
         for(int i = 0;i<numere.Length/2;i++)
@@ -440,6 +575,7 @@ internal class Program
 
     private static void Problema8()
     {
+        Console.WriteLine("Introduceti vectorul pe care doriti sa il rotiti cu o pozitie spre stanga: ");
         int[] numere = GetInputVector();
         int aux = numere[0];
         for (int i = 0; i < numere.Length - 1; i++)
@@ -451,6 +587,8 @@ internal class Program
     }
     private static void Problema9()
     {
+        Console.WriteLine("Introduceti vectorul pe care doriti sa il rotiti cu k pozitii spre stanga: ");
+
         int[] numere = GetInputVector();
         Console.WriteLine("Introduceti un numar k care semnifica numarul de rotiri pe care doriti sa-l efectuati asupra vectorului.");
         int k = GetInputInt();
@@ -470,6 +608,7 @@ internal class Program
 
     private static void Problema10() 
     {
+        Console.Write("Introduceti vectorul pe care se va face cautarea binara: ");
         int[] numere = GetInputVector();
         Console.Write("Introduceti un numar k pe care doriti sa il gasiti in vector ");
         int k = GetInputInt();
@@ -480,7 +619,7 @@ internal class Program
 
     private static void Problema11()
     {
-        Console.Write("Introduceti un numar n pentru care doriti sa aflati toate numerele prime mai mici sau egale cu acesta: ");
+        Console.WriteLine("Introduceti un numar n pentru care doriti sa aflati toate numerele prime mai mici sau egale cu acesta: ");
         int n = GetInputInt();
 
         int[] prime = new int[n+1];
@@ -514,6 +653,7 @@ internal class Program
 
     private static void Problema12() 
     {
+        Console.WriteLine("Introduceti vectorul pe care doriti sa se faca SelectionSort: ");
         int[] numere = GetInputVector();
 
         SelectionSort(numere);
@@ -522,6 +662,8 @@ internal class Program
 
     private static void Problema13() 
     {
+        Console.WriteLine("Introduceti vectorul pe care doriti sa se faca InsertionSort: ");
+
         int[] numere = GetInputVector();
 
         for(int i = 1;i<numere.Length;i++)
@@ -540,6 +682,7 @@ internal class Program
 
     private static void Problema14()
     {
+        Console.WriteLine("Introduceti vectorul pentru care doriti ca toate valorile egale cu zero sa ajunga la final: ");
         int[] numere = GetInputVector();
         int indexAux;
         for(int i = 0;i<numere.Length;i++)
@@ -561,6 +704,7 @@ internal class Program
 
     private static void Problema15() 
     {
+        Console.WriteLine("Introduceti vectorul din care se vor elimina elementele care se repeta: ");
         int[] numere = GetInputVector();
         numere = RemoveRepeatingElements(numere);
         ShowTheArray(numere);
@@ -568,6 +712,7 @@ internal class Program
 
     private static void Problema16()
     {
+        Console.WriteLine("Introduceti vectorul din care doriti sa extrageti cel mai mare divizor comun pentru toate numerele din vector: ");
         int[] numere = GetInputVector();
 
         int div = CMMDC(numere[0], numere[1]);
@@ -599,13 +744,14 @@ internal class Program
     }
     private static void Problema18() 
     {
+        Console.WriteLine("Introduceti polinomul de grad n cu cel mai putin semnificativ coeficient fiind pe prima pozitie in vector: ");
         int[] polinom = GetInputVector();
         Console.Write("Introduceti un n pentru care doriti sa calculati valoarea polinomului in acel punct: ");
         int x = GetInputInt();
-        double rezultat = 0;
+        long rezultat = 0;
         for(int i = 0;i<polinom.Length;i++)
         {
-            rezultat += polinom[i] * Math.Pow(x, i);
+            rezultat += polinom[i] * (long)Math.Pow(x, i);
         }
 
         Console.WriteLine($"Rezultatul polinomului in punctul {x} este: {rezultat}.");
@@ -967,6 +1113,108 @@ internal class Program
         Console.ReadLine();
         
         
+    }
+    private static void Problema27()
+    {
+        Console.WriteLine("Introduceti un vector de numere: ");
+        int[] v = GetInputVector();
+        Console.Write("Introduceti indexul dorit: ");
+        int k = GetInputInt();
+        int max = int.MinValue;
+        for(int i = 0;i< v.Length;i++) { if (v[i]> max) max = v[i]; }
+        int[] vFrecventa = new int[max+1];
+        for(int i = 0; i < v.Length; i++) { vFrecventa[v[i]]++; }
+        int aux = -1;
+        int l = 0;
+        while(l< vFrecventa.Length&&aux<k)
+        {
+            for(int j = 0; j < vFrecventa[l];j++)
+            {
+                aux++;
+                if (aux == k) { Console.Write($"{l}"); break; }
+            }
+            l++;
+        }
+
+    }
+
+    private static void Problema28() 
+    {
+        Console.WriteLine("Introduceti un vector de numere pe care sa se aplice QuickSort: ");
+
+        int[] v = GetInputVector();
+        QuickSort(v,0,v.Length-1);
+        ShowTheArray(v);
+    }
+
+    private static void Problema29() 
+    {
+        Console.WriteLine("Introduceti un vector de numere pe care sa se aplice MergeSort: ");
+
+        int[] v = GetInputVector();
+        MergeSort(v,0,v.Length-1);
+        ShowTheArray(v);
+    }
+
+    private static void Problema30() 
+    {
+        Console.Write("Introduceti vectorul de numere: ");
+        int[] E = GetInputVector();
+        Console.WriteLine();
+        Console.Write("Introduceti vectorul de pondere: ");
+        int[] W = GetInputVector();
+
+        bool sorted;
+        do
+        {
+            sorted = true;
+            for (int i = 0; i < E.Length - 1; i++)
+            {
+                if (E[i] > E[i + 1])
+                {
+                    (E[i], E[i + 1]) = (E[i + 1], E[i]);
+                    (W[i], W[i + 1]) = (W[i + 1], W[i]);
+                    sorted = false;
+                }
+                else if (E[i] == E[i + 1]&& W[i] < W[i + 1])
+                {
+                    (E[i], E[i + 1]) = (E[i + 1], E[i]);
+                    (W[i], W[i + 1]) = (W[i + 1], W[i]);
+                    sorted = false;
+                }
+            }
+        }
+        while(sorted==false);
+        ShowTheArray(E);
+        Console.WriteLine();
+        ShowTheArray(W);
+    }
+    private static void Problema31()
+    {
+        Console.Write("Introdu vectorul pe care se cauta elementul majoritate: ");
+        int[] v = GetInputVector();
+        int majoritate = 0;
+        int elementMajoritate=-1;
+        int aux = 1;
+        MergeSort(v,0,v.Length-1);
+        for(int i = 0;i<v.Length-1;i++) 
+        {
+            if (v[i] == v[i+1])
+            {
+                aux++;
+            }
+            else if (aux > majoritate)
+            {
+                majoritate = aux;
+                elementMajoritate= v[i];
+                aux = 1;
+            }
+        }
+        if(majoritate>v.Length/2)
+        {
+            Console.WriteLine(elementMajoritate);
+        }
+        else Console.WriteLine("<nu exista>");
     }
     #endregion
 }
