@@ -844,19 +844,19 @@ internal class Program
         int[] v1 = GetInputVector();
         Console.WriteLine("Introduceti al doilea vector");
         int[] v2 = GetInputVector();
-        int max = int.MinValue;
+        int maximul = int.MinValue;
         for(int i = 0;i<v1.Length;i++)
         {
-            if (v1[i]>max) max = v1[i];
+            if (v1[i]>maximul) maximul = v1[i];
         }
-        int[] v1Bool = new int[max];
+        int[] v1Bool = new int[maximul+1];
 
         int max = int.MinValue;
         for (int i = 0; i < v2.Length; i++)
         {
-            if (v2[i] > max) max = v2[i];
+            if (v2[i] > maximul) maximul = v2[i];
         }
-        int[] v2Bool = new int[max];
+        int[] v2Bool = new int[maximul+1];
         
         for(int i = 0;i< v1.Length;i++) 
         {
@@ -868,10 +868,42 @@ internal class Program
         }
 
         Console.Write("Intersectia celor doi vectori este: ");
-        for(int i = 0;i<v1.Length;i++)
+        for(int i = 0;i<v1Bool.Length;i++)
         {
             if (v1Bool[i] == 1 && v2Bool[i]==1)
-                Console.Write(i+' ');
+                Console.Write(i+" ");
+        }
+        Console.WriteLine();
+
+        Console.Write("Reuniunea celor doi vectori este: ");
+        for (int i = 0; i < Math.Max(v1Bool.Length,v2Bool.Length); i++)
+        {
+            if (i<v1Bool.Length&&v1Bool[i] == 1)
+                Console.Write(i + " ");
+            else if (i < v2Bool.Length && v2Bool[i]==1) 
+            {
+                Console.Write(i + " ");
+            }
+        }
+
+        Console.WriteLine() ;
+        Console.Write("v1-v2 este: ");
+        for (int i = 0; i < v1Bool.Length; i++)
+        {
+            if (i<v2Bool.Length&&v1Bool[i] == 1 && v2Bool[i] == 0)
+                Console.Write(i + " ");
+            else if (i>=v2Bool.Length&&v1Bool[i] == 1)
+                Console.Write(i + " ");
+        }
+        Console.WriteLine();
+
+        Console.Write("v2-v1 este: ");
+        for (int i = 0; i < v2Bool.Length; i++)
+        {
+            if (i< v1Bool.Length && v1Bool[i] == 0 && v2Bool[i] == 1)
+                Console.Write(i + " ");
+            else if (i>=v1Bool.Length&&v2Bool[i]==1)
+                Console.Write(i + " ");
         }
         Console.WriteLine();
     }
