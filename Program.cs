@@ -19,7 +19,6 @@ internal class Program
             indexProblema = InputProblemIndex();
         }    
         ExecutareProblema(indexProblema);
-        int b = indexProblema;
     }
  
     private static void ExecutareProblema(int index)
@@ -51,7 +50,7 @@ internal class Program
             case 23: Problema23(); break;
             case 24: Problema24(); break;
             case 25: Problema25(); break;
-            //case 26: Problema26(); break;
+            case 26: Problema26(); break;
             case 27: Problema27(); break;
             case 28: Problema28(); break;
             case 29: Problema29(); break;
@@ -62,6 +61,23 @@ internal class Program
     }
 
     #region Helpers
+
+    #region InputsOutputs
+    private static int InputProblemIndex()
+    {
+        Console.Write("Introdu indexul problemei dorite: ");
+        int indexProblema = 0;
+        try
+        {
+            indexProblema = int.Parse(Console.ReadLine());
+        }
+        catch
+        {
+            Console.WriteLine("Datele introduse sunt gresite, te rog introdu din nou datele.");
+            indexProblema = InputProblemIndex();
+        }
+        return indexProblema;
+    }
     private static int[] GetInputVector()
     {
         int[] vectorNumere;
@@ -103,6 +119,7 @@ internal class Program
         foreach(int i in array) Console.Write(i+" ");
     }
 
+    #endregion
     private static int BinarySearch(int[] array, int x, int low, int high)
     {
         int mid;
@@ -132,6 +149,7 @@ internal class Program
         }
         return a;
     }
+    #region Transformari
     private static char NumberToChar(int n)
     {
         switch(n)
@@ -174,22 +192,8 @@ internal class Program
         }
         
     }
-
-    private static int InputProblemIndex()
-    {
-        Console.Write("Introdu indexul problemei dorite: ");
-        int indexProblema = 0;
-        try
-        {
-            indexProblema = int.Parse(Console.ReadLine());
-        }
-        catch
-        {
-            Console.WriteLine("Datele introduse sunt gresite, te rog introdu din nou datele.");
-            indexProblema = InputProblemIndex();
-        }
-        return indexProblema;
-    }
+    #endregion
+    
 
     private static int[] RemoveRepeatingElements(int[] numere)
     {
@@ -206,7 +210,7 @@ internal class Program
         }
         return numere;
     }
-
+    #region Sortari
     private static int[] SelectionSort(int[] numere) 
     {
         int min;
@@ -306,8 +310,10 @@ internal class Program
             MergeSortAux(numere, l, m, r);
         }
     }
+    #endregion
 
-    private static char[] AdunareDouaNumereMari(string numar1,string numar2)
+    #region ProcesareNumereMari
+    private static string AdunareDouaNumereMari(string numar1,string numar2)
     {
         char[] adunare;
         string longerNumber;
@@ -359,21 +365,88 @@ internal class Program
             adunare[adunare.Length - i - 1] = NumberToChar(aux);
             i++;
         }
-        return adunare;
+        if (adunare[0] == '0')
+        { Array.Copy(adunare, 1, adunare, 0, adunare.Length - 1); Array.Resize(ref adunare,adunare.Length - 1); }
+        string rezultat="";
+        foreach(char c in adunare)
+        {
+            rezultat += c;
+        }
+        return rezultat;
     }
     private static string ScadereDouaNumereMari(string numar1,string numar2)
     {
         Stack<char> stackScadere = new Stack<char>();
-        bool isNegative=false;
-        int i = numar1.Length- 1;
-        int j = numar2.Length- 1;
-        int carry=0;
-        int aux;
-        while(i >= 0 && j >= 0)
+
+        bool isNegative =false;
+        if(numar1.Length <numar2.Length) 
         {
-            aux = CharToNumber(numar1[i]) - CharToNumber(numar2[j])-carry;
+            isNegative = true;
+        }
+        else if(numar1.Length>numar2.Length)
+        {
+            isNegative = false;
+        }
+        else
+        {
+            for (int i = 0; i < Math.Min(numar1.Length, numar2.Length); i++)
+            {
+                if (CharToNumber(numar1[i]) > CharToNumber(numar2[i]))
+                {
+                    isNegative = false;
+                    break;
+                }
+                else if (CharToNumber(numar1[i]) < CharToNumber(numar2[i]))
+                {
+                    isNegative = true;
+                    break;
+                }
+            }
+        
+        }
+       if(isNegative)
+        {
+            stackScadere = ScadereDouaNumereMariAux(numar2, numar1);
+        }
+       else
+        {
+            stackScadere = ScadereDouaNumereMariAux(numar1, numar2);
+        }
+
+
+
+
+        if (isNegative) 
+        {
+            stackScadere.Push('-');
+        }
+        string stringNumar = "";
+
+        while (stackScadere.Peek()=='0')
+        {
+            stackScadere.Pop();
+        }
+
+        foreach(char c in stackScadere) 
+        {
+            stringNumar += c;
+        }
+        
+        return stringNumar;
+    }
+    private static Stack<char> ScadereDouaNumereMariAux(string numar1, string numar2)
+    {
+        Stack<char> stackScadere = new Stack<char>();
+
+        int i = numar1.Length - 1;
+        int j = numar2.Length - 1;
+        int carry = 0;
+        int aux;
+        while (i >= 0 && j >= 0)
+        {
+            aux = CharToNumber(numar1[i]) - CharToNumber(numar2[j]) - carry;
             carry = 0;
-            if (aux<0)
+            if (aux < 0)
             {
                 carry = 1;
                 aux += 10;
@@ -386,15 +459,15 @@ internal class Program
             i--;
             j--;
         }
-        if(i>0)
-        {          
-            for (int k = i;k>0;k--) 
+        if (i >= 0)
+        {
+            for (int k = i; k >= 0; k--)
             {
-                aux = CharToNumber(numar1[i]) - 1;
+                aux = CharToNumber(numar1[k]) - carry;
                 if (aux < 0)
                 {
                     carry = 1;
-                    stackScadere.Push(NumberToChar(aux+10));
+                    stackScadere.Push(NumberToChar(aux + 10));
 
                 }
                 else
@@ -404,22 +477,59 @@ internal class Program
                 }
             }
         }
-        else if(j>0) 
-        {
-            isNegative = true;
-
-        }
-
-        if(isNegative) 
-        {
-            stackScadere.Push('-');
-        }
-        string stringNumar="";
-        return stringNumar;
+        return stackScadere;
     }
+    
+    private static string InmultireDouaNumereMari(string numar1,string numar2)
+    {
+        int[,] matriceInmultire = new int[numar1.Length,numar2.Length+1];
+        int carry;
+        int aux;
+        for (int i = 0; i < numar1.Length; i++)
+        {
+            carry = 0;
+            for (int j = 0; j < numar2.Length; j++)
+            {
+                aux = CharToNumber(numar1[numar1.Length-i-1]) * CharToNumber(numar2[numar2.Length-j-1])+carry;
+                carry = 0;
+                if(aux>=10)
+                {
+                    carry = aux / 10;
+                    aux = aux % 10;
+                }
+                matriceInmultire[i, numar2.Length - j] = aux;
+            }
+            matriceInmultire[i, 0] = carry;
+        }
+        string[] sirNumereAuxiliare = new string[matriceInmultire.GetLength(0)];
+        for(int i = 0;i<matriceInmultire.GetLength(0);i++)
+        {
+            for (int j = 0;j<matriceInmultire.GetLength(1);j++)
+            {
+                if (j == 0 && matriceInmultire[i, j] == 0)
+                    continue;
+                sirNumereAuxiliare[i] += NumberToChar(matriceInmultire[i, j]);
+            }
+            
+            for(int k = 0;k<i;k++)
+            {
+                sirNumereAuxiliare[i] += "0";
+            }
+        }
+        string rezultat = "0";
+        foreach (string sir in sirNumereAuxiliare)
+        {
+            rezultat = AdunareDouaNumereMari(rezultat, sir);
+        }
+        return rezultat;
+    }
+
+    #endregion
+
     #endregion
 
     #region Probleme
+    #region PrimaJumatate
     private static void Problema1()
     {
         Console.WriteLine("Introduceti vectorul pentru care doriti suma elementelor: ");
@@ -709,7 +819,8 @@ internal class Program
         numere = RemoveRepeatingElements(numere);
         ShowTheArray(numere);
     }
-
+    #endregion
+    #region ADouaJumatate
     private static void Problema16()
     {
         Console.WriteLine("Introduceti vectorul din care doriti sa extrageti cel mai mare divizor comun pentru toate numerele din vector: ");
@@ -1105,12 +1216,13 @@ internal class Program
         Console.WriteLine("Introduceti al doilea numar natural mare fara alte simboluri in afara de cifre.");
         string numar2 = Console.ReadLine();
         
-        char[] adunare = AdunareDouaNumereMari(numar1,numar2);
+        string adunare = AdunareDouaNumereMari(numar1,numar2);
+        string scadere = ScadereDouaNumereMari(numar1, numar2);
+        string inmultire = InmultireDouaNumereMari(numar1, numar2);
 
-        //TODO: implement the multiplication and substraction methods
-
-        Console.Write(adunare);
-        Console.ReadLine();
+        Console.WriteLine("Adunarea numerelor: " + adunare);
+        Console.WriteLine("Scaderea numerelor: " + scadere);
+        Console.WriteLine("Inmultirea numerelor: "+ inmultire);
         
         
     }
@@ -1216,5 +1328,6 @@ internal class Program
         }
         else Console.WriteLine("<nu exista>");
     }
+    #endregion
     #endregion
 }
